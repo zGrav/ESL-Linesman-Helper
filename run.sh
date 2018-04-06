@@ -19,23 +19,29 @@ fi
 
 find ~/Downloads/linesman* -type d -exec chmod -R 777 {} +
 
-USERID=$(find ~/Downloads/linesman* -type f -execdir grep -rnw {} -e "User Id:" \;)
-MATCHID=$(find ~/Downloads/linesman* -type f -execdir grep -rnw {} -e "Match Id:" \;)
+for i in ~/Downloads/linesman* ; do
+  if [ -d "$i" ]; then
+    USERID=$(find $i -type f -execdir grep -rnw {} -e "User Id:" \;)
+    MATCHID=$(find $i -type f -execdir grep -rnw {} -e "Match Id:" \;)
 
-echo -e "\033[1;33m" $USERID
-echo -e "\033[1;33m" $MATCHID
+    echo -e "\033[1;33m"$USERID
+    echo -e "\033[1;33m"$MATCHID
 
-echo
+    echo
 
-USERIDCLEAN=$(awk '{print $3}' <<< $USERID)
+    USERIDCLEAN=$(awk '{print $3}' <<< $USERID)
 
-echo -e "\033[1;32mPlayer Name on ESL: $(wget --quiet -O - https://play.eslgaming.com/player/"$USERIDCLEAN"/ \ | sed -n -e 's!.*<title>\(.*\)</title>.*!\1!p' | awk '{print $1}')"
-echo -e "\033[1;32mCSGO SteamID: $(wget --quiet -O - https://play.eslgaming.com/player/gameaccounts/"$USERIDCLEAN"/ | grep "SteamID CS:GO" -A2 | grep "active_y.gif" | sed -e 's/<[^>]*>//g')"
+    echo -e "\033[1;32mPlayer Name on ESL: $(wget --quiet -O - https://play.eslgaming.com/player/"$USERIDCLEAN"/ \ | sed -n -e 's!.*<title>\(.*\)</title>.*!\1!p' | awk '{print $1}')"
+    echo -e "\033[1;32mCSGO SteamID: $(wget --quiet -O - https://play.eslgaming.com/player/gameaccounts/"$USERIDCLEAN"/ | grep "SteamID CS:GO" -A2 | grep "active_y.gif" | sed -e 's/<[^>]*>//g')"
 
-echo
+    echo
 
-echo -e "\033[1;36m"
+    echo -e "\033[1;36m"
 
-IFS='
-' # to join "$*" with newline
-find ~/Downloads/linesman* -type f -execdir grep -rnw {} -e "$*" \;
+    IFS='
+    ' # to join "$*" with newline
+    find $i -type f -execdir grep -rnw {} -e "$*" \;
+
+    echo
+  fi
+done
